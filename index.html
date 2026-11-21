@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b63ce">
+<title>SP MOBILE FINDER</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f1f5fb;color:#172033}
+header{background:linear-gradient(135deg,#0754bd,#1685ed);color:white;padding:25px 18px 30px;border-radius:0 0 25px 25px}
+.brand{font-size:25px;font-weight:800}
+.sub{font-size:13px;margin-top:7px;opacity:.9}
+main{max-width:750px;margin:auto;padding:18px}
+.search{width:100%;padding:16px;border:1px solid #d6dfeb;border-radius:13px;font-size:16px;outline:none;background:white}
+.search:focus{border-color:#0875e8}
+h3{margin:23px 0 12px}
+.categories{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.category{background:white;border:1px solid #e0e8f2;padding:17px 10px;border-radius:14px;text-align:center;font-weight:bold;cursor:pointer;color:#164b8d}
+.category.active{background:#dcecff;border-color:#1685ed}
+.note{background:#fff4d7;color:#75520a;padding:11px;border-radius:10px;font-size:12px;margin-top:15px}
+.results{margin-top:18px}
+.result{background:white;padding:15px;border-radius:13px;margin:10px 0;border:1px solid #e0e8f2}
+.result h4{margin:0 0 8px;color:#0754bd}
+.result p{font-size:14px;line-height:1.6;margin:5px 0}
+.tag{font-size:11px;background:#fff0cc;color:#825600;padding:4px 8px;border-radius:20px}
+.empty{color:#68758a;text-align:center;padding:22px}
+footer{text-align:center;padding:25px;color:#78849a;font-size:12px}
+button{border:0;background:#0875e8;color:white;padding:12px 16px;border-radius:10px;cursor:pointer}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand">📱 SP MOBILE FINDER</div>
+ <div class="sub">Find the Right Mobile Parts Easily</div>
+ <div class="sub">SP CYBER & ELECTRONICS</div>
+</header>
+
+<main>
+ <h3>Search Mobile / Part Number</h3>
+ <input id="search" class="search" type="search"
+ placeholder="Enter mobile model or part number..."
+ oninput="showResults()">
+
+ <h3>Parts Categories</h3>
+ <div class="categories" id="categories">
+  <div class="category active" onclick="choose('All')">🔎 All Parts</div>
+  <div class="category" onclick="choose('Display')">📱 Display</div>
+  <div class="category" onclick="choose('Battery')">🔋 Battery</div>
+  <div class="category" onclick="choose('Tempered Glass')">🛡️ Tempered Glass</div>
+  <div class="category" onclick="choose('Back Cover')">📱 Back Cover</div>
+  <div class="category" onclick="choose('Charging Flex')">🔌 Charging Flex</div>
+  <div class="category" onclick="choose('Camera Glass')">📷 Camera Glass</div>
+  <div class="category" onclick="choose('Speaker & Mic')">🎤 Speaker & Mic</div>
+ </div>
+
+ <div class="note">
+  ⚠ DEMO DATABASE: Sample entries only. Compatibility is not verified.
+ </div>
+
+ <div class="results" id="results">
+  <div class="empty">Search a mobile model or part number to see results.</div>
+ </div>
+</main>
+
+<footer>
+Developed by SP CYBER & ELECTRONICS<br>
+SP MOBILE FINDER
+</footer>
+
+<script>
+// DEMO DATA ONLY — replace with verified supplier data.
+const parts = [
+ {model:"Demo Model A",brand:"DEMO",category:"Display",part:"DEMO-DIS-001",compatible:"Demo Model B",status:"UNVERIFIED DEMO"},
+ {model:"Demo Model A",brand:"DEMO",category:"Battery",part:"DEMO-BAT-001",compatible:"Demo Model A",status:"UNVERIFIED DEMO"},
+ {model:"Demo Model B",brand:"DEMO",category:"Tempered Glass",part:"DEMO-TG-001",compatible:"Demo Model A",status:"UNVERIFIED DEMO"},
+ {model:"Demo Model C",brand:"DEMO",category:"Charging Flex",part:"DEMO-CF-001",compatible:"Demo Model C",status:"UNVERIFIED DEMO"}
+];
+
+let selected = "All";
+
+function choose(category){
+ selected=category;
+ document.querySelectorAll(".category").forEach(el=>{
+  el.classList.toggle("active",el.textContent.includes(category==="All"?"All Parts":category));
+ });
+ showResults();
+}
+
+function showResults(){
+ const q=document.getElementById("search").value.trim().toLowerCase();
+ const output=document.getElementById("results");
+ const found=parts.filter(p=>{
+  const matchesCategory=selected==="All"||p.category===selected;
+  const matchesSearch=!q||[p.model,p.brand,p.category,p.part,p.compatible]
+   .some(v=>v.toLowerCase().includes(q));
+  return matchesCategory&&matchesSearch;
+ });
+
+ if(!found.length){
+  output.innerHTML='<div class="empty">No matching parts found. Try another model or part number.</div>';
+  return;
+ }
+
+ output.innerHTML=found.map(p=>`
+  <div class="result">
+   <h4>${p.brand} - ${p.model}</h4>
+   <p><b>Part Category:</b> ${p.category}</p>
+   <p><b>Part Number:</b> ${p.part}</p>
+   <p><b>Compatible Model:</b> ${p.compatible}</p>
+   <span class="tag">${p.status}</span>
+  </div>
+ `).join("");
+}
+</script>
+</body>
+</html>
