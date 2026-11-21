@@ -1,0 +1,11 @@
+{
+  "name": "SP MOBILE FINDER",
+  "short_name": "SP FINDER",
+  "description": "Mobile Parts Compatibility Finder by SP CYBER & ELECTRONICS",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f1f5fb",
+  "theme_color": "#0754bd"
+}
