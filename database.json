@@ -1,8 +1,8 @@
 {
   "parts": [
     {
-      "model": "Demo Model A",
-      "brand": "DEMO",
+      "model": "REALME ",
+      "brand": "REALME",
       "category": "Display",
       "part": "DEMO-DIS-001",
       "compatible": ["Demo Model B"],
