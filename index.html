@@ -196,5 +196,19 @@ if("serviceWorker" in navigator){
  });
 }
 </script>
+<script>
+let parts = [];
+
+async function loadDatabase() {
+  try {
+    const response = await fetch("./database.json");
+    const data = await response.json();
+    parts = data.parts || [];
+    showResults();
+  } catch (error) {
+    console.error("Database loading failed:", error);
+  }
+}
+</script>
 </body>
 </html>
