@@ -1,36 +1,21 @@
 {
   "parts": [
     {
-      "model": "Demo Model A",
-      "brand": "DEMO",
       "category": "Display",
-      "part": "DEMO-DIS-001",
-      "compatible": ["Demo Model B"],
-      "status": "UNVERIFIED DEMO"
-    },
-    {
-      "model": "Demo Model A",
-      "brand": "DEMO",
-      "category": "Battery",
-      "part": "DEMO-BAT-001",
-      "compatible": ["Demo Model A"],
-      "status": "UNVERIFIED DEMO"
-    },
-    {
-      "model": "Demo Model B",
-      "brand": "DEMO",
-      "category": "Tempered Glass",
-      "part": "DEMO-TG-001",
-      "compatible": ["Demo Model A"],
-      "status": "UNVERIFIED DEMO"
-    },
-    {
-      "model": "Demo Model C",
-      "brand": "DEMO",
-      "category": "Charging Flex",
-      "part": "DEMO-CF-001",
-      "compatible": ["Demo Model C"],
-      "status": "UNVERIFIED DEMO"
+      "part": "DISPLAY-GROUP-001",
+      "models": [
+        "Redmi 9a",
+        "Redmi 9aT",
+        "Redmi 9a Sport",
+        "Redmi 9i Sport",
+        "Mi 10a",
+        "Redmi 9c",
+        "Poco C3",
+        "Poco C31",
+        "Redmi 9i",
+        "Redmi 10a"
+      ],
+      "status": "VERIFIED"
     }
   ]
 }
