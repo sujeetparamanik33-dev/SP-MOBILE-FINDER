@@ -36,95 +36,163 @@ footer{text-align:center;padding:25px;color:#78849a;font-size:12px}
 <header>
  <div class="brand">📱 SP MOBILE FINDER</div>
  <div class="sub">Find the Right Mobile Parts Easily</div>
- <div class="sub">SP CYBER & ELECTRONICS</div>
+ <div class="sub">SP CYBER &amp; ELECTRONICS</div>
 </header>
 
 <main>
  <h3>Search Mobile / Part Number</h3>
  <input id="search" class="search" type="search"
  placeholder="Enter mobile model or part number..."
- oninput="showResults()">
+ autocomplete="off">
 
  <h3>Parts Categories</h3>
  <div class="categories" id="categories">
-  <div class="category active" onclick="choose('All',this)">🔎 All Parts</div>
-  <div class="category" onclick="choose('Display',this)">📱 Display</div>
-  <div class="category" onclick="choose('Battery',this)">🔋 Battery</div>
-  <div class="category" onclick="choose('Tempered Glass',this)">🛡️ Tempered Glass</div>
-  <div class="category" onclick="choose('Back Cover',this)">📱 Back Cover</div>
-  <div class="category" onclick="choose('Charging Flex',this)">🔌 Charging Flex</div>
-  <div class="category" onclick="choose('Camera Glass',this)">📷 Camera Glass</div>
-  <div class="category" onclick="choose('Speaker & Mic',this)">🎤 Speaker & Mic</div>
-  <div class="category" onclick="choose('Universal Folder',this)">📂 Universal Folder</div>
+  <div class="category active" data-category="All">🔎 All Parts</div>
+  <div class="category" data-category="Display">📱 Display</div>
+  <div class="category" data-category="Battery">🔋 Battery</div>
+  <div class="category" data-category="Tempered Glass">🛡️ Tempered Glass</div>
+  <div class="category" data-category="Back Cover">📱 Back Cover</div>
+  <div class="category" data-category="Charging Flex">🔌 Charging Flex</div>
+  <div class="category" data-category="Camera Glass">📷 Camera Glass</div>
+  <div class="category" data-category="Speaker & Mic">🎤 Speaker &amp; Mic</div>
+  <div class="category" data-category="Universal Folder">📂 Universal Folder</div>
  </div>
 
  <div class="note">
   ⚠ DEMO DATABASE: Sample entries only. Compatibility is not verified.
  </div>
 
- <div class="results" id="results">
-  <div class="empty">Search a mobile model or part number to see results.</div>
- </div>
+ <div id="status" class="empty">Loading database...</div>
+ <div class="results" id="results"></div>
 </main>
 
 <footer>
-Developed by SP CYBER & ELECTRONICS<br>
+Developed by SP CYBER &amp; ELECTRONICS<br>
 SP MOBILE FINDER
 </footer>
 
 <script>
-// DEMO DATA ONLY — replace with verified supplier data.
-const parts = [
- {model:"Demo Model A",brand:"DEMO",category:"Display",part:"DEMO-DIS-001",compatible:"Demo Model B",status:"UNVERIFIED DEMO"},
- {model:"Demo Model A",brand:"DEMO",category:"Battery",part:"DEMO-BAT-001",compatible:"Demo Model A",status:"UNVERIFIED DEMO"},
- {model:"Demo Model B",brand:"DEMO",category:"Tempered Glass",part:"DEMO-TG-001",compatible:"Demo Model A",status:"UNVERIFIED DEMO"},
- {model:"Demo Model C",brand:"DEMO",category:"Charging Flex",part:"DEMO-CF-001",compatible:"Demo Model C",status:"UNVERIFIED DEMO"}
-];
-
+let parts = [];
 let selected = "All";
+
+const searchBox = document.getElementById("search");
+const output = document.getElementById("results");
+const statusBox = document.getElementById("status");
+
+function textValue(value){
+ return String(value ?? "");
+}
+
+function escapeHTML(value){
+ return textValue(value).replace(/[&<>"']/g, char => ({
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#39;"
+ }[char]));
+}
 
 function choose(category, element){
  selected = category;
+
  document.querySelectorAll(".category").forEach(el=>{
   el.classList.remove("active");
  });
+
  element.classList.add("active");
  showResults();
 }
 
 function showResults(){
- const q=document.getElementById("search").value.trim().toLowerCase();
- const output=document.getElementById("results");
+ const q = searchBox.value.trim().toLowerCase();
 
- const found=parts.filter(p=>{
-  const matchesCategory=selected==="All"||p.category===selected;
-  const matchesSearch=!q||[p.model,p.brand,p.category,p.part,p.compatible]
-   .some(v=>v.toLowerCase().includes(q));
-  return matchesCategory&&matchesSearch;
+ const found = parts.filter(p=>{
+  const compatible = Array.isArray(p.compatible)
+   ? p.compatible.join(", ")
+   : textValue(p.compatible);
+
+  const matchesCategory =
+   selected === "All" ||
+   textValue(p.category).toLowerCase() === selected.toLowerCase();
+
+  const searchable = [
+   p.model, p.brand, p.category, p.part, compatible
+  ].map(textValue).join(" ").toLowerCase();
+
+  return matchesCategory && searchable.includes(q);
  });
 
+ output.innerHTML = "";
+
  if(!found.length){
-  output.innerHTML='<div class="empty">No matching parts found. Try another model or part number.</div>';
+  output.innerHTML =
+   '<div class="empty">No matching parts found. Try another model or part number.</div>';
+  statusBox.textContent = "0 parts found";
   return;
  }
 
- output.innerHTML=found.map(p=>`
-  <div class="result">
-   <h4>${p.brand} - ${p.model}</h4>
-   <p><b>Part Category:</b> ${p.category}</p>
-   <p><b>Part Number:</b> ${p.part}</p>
-   <p><b>Compatible Model:</b> ${p.compatible}</p>
-   <span class="tag">${p.status}</span>
-  </div>
- `).join("");
-}
-</script>
+ statusBox.textContent = found.length + " parts found";
 
-<script>
-if ("serviceWorker" in navigator) {
- window.addEventListener("load", () => {
+ found.forEach(p=>{
+  const compatible = Array.isArray(p.compatible)
+   ? p.compatible.join(", ")
+   : textValue(p.compatible);
+
+  output.innerHTML += `
+   <div class="result">
+    <h4>${escapeHTML(p.brand)} - ${escapeHTML(p.model)}</h4>
+    <p><b>Part Category:</b> ${escapeHTML(p.category)}</p>
+    <p><b>Part Number:</b> ${escapeHTML(p.part)}</p>
+    <p><b>Compatible Model:</b> ${escapeHTML(compatible)}</p>
+    <span class="tag">${escapeHTML(p.status || "UNVERIFIED")}</span>
+   </div>
+  `;
+ });
+}
+
+async function loadDatabase(){
+ statusBox.textContent = "Loading database...";
+
+ try{
+  const response = await fetch("./database.json");
+
+  if(!response.ok){
+   throw new Error("Database file not found");
+  }
+
+  const data = await response.json();
+
+  if(!Array.isArray(data.parts)){
+   throw new Error("Invalid database format");
+  }
+
+  parts = data.parts;
+  statusBox.textContent = "";
+  showResults();
+
+ }catch(error){
+  statusBox.textContent = "Database loading failed";
+  output.innerHTML =
+   '<div class="empty">Could not load database. Please check your internet connection and database.json file.</div>';
+  console.error(error);
+ }
+}
+
+document.querySelectorAll(".category").forEach(element=>{
+ element.addEventListener("click", ()=>{
+  choose(element.dataset.category, element);
+ });
+});
+
+searchBox.addEventListener("input", showResults);
+
+loadDatabase();
+
+if("serviceWorker" in navigator){
+ window.addEventListener("load", ()=>{
   navigator.serviceWorker.register("./service-worker.js")
-   .catch(error => console.log("Service Worker Error:", error));
+   .catch(error=>console.log("Service Worker Error:",error));
  });
 }
 </script>
